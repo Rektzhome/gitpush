@@ -11,7 +11,9 @@ Fitur utamanya meliputi:
 
 Teknologi yang Digunakan:
 Frontend: Next.js + Tailwind CSS
+
 Komponen UI: Shadcn UI
+
 Ikon: Lucide React
 Routing: Next.js App Router
 Deployment: Vercel
