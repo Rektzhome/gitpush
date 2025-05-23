@@ -1,0 +1,203 @@
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+header {
+    background-color: #333;
+    color: #fff;
+    padding: 1rem 0;
+    text-align: center;
+}
+
+header h1 {
+    margin: 0;
+}
+
+main {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+hr {
+    margin: 20px 0;
+    border: 0;
+    border-top: 1px solid #eee;
+}
+
+h2 {
+    color: #333;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 5px;
+    margin-top: 0;
+}
+
+/* Sections Styling */
+section {
+    margin-bottom: 30px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+#auth-section small {
+    display: block;
+    margin-top: 5px;
+    font-size: 0.9em;
+    color: #666;
+}
+
+/* Form Elements */
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="url"],
+select {
+    width: calc(100% - 22px); /* Full width minus padding and border */
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box; /* So padding doesn't add to width */
+}
+
+button, .button {
+    display: inline-block;
+    background-color: #007bff;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1em;
+    text-align: center;
+    text-decoration: none;
+}
+
+button:hover, .button:hover {
+    background-color: #0056b3;
+}
+
+button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.danger-button {
+    background-color: #dc3545;
+}
+
+.danger-button:hover {
+    background-color: #c82333;
+}
+
+/* Operations Container */
+.operations-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.operations-container section {
+    background-color: #fff; /* Slightly different background for operation cards */
+}
+
+
+/* Repository List Area */
+#repo-display-area {
+    background-color: #e9ecef; /* Light background for this distinct area */
+}
+#repo-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+#repo-list li {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#repo-list li:last-child {
+    border-bottom: none;
+}
+
+#repo-list li.selected {
+    background-color: #d1ecf1;
+    font-weight: bold;
+}
+
+#repo-list .select-repo-button {
+    margin-left: 10px;
+    padding: 5px 10px;
+    font-size: 0.9em;
+}
+
+#no-repos-message {
+    font-style: italic;
+    color: #666;
+}
+
+/* Feedback Messages */
+.feedback {
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 4px;
+    font-size: 0.9em;
+}
+
+.feedback.success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.feedback.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.feedback.loading {
+    background-color: #e2e3e5;
+    color: #383d41;
+    border: 1px solid #d6d8db;
+}
+
+
+footer {
+    text-align: center;
+    padding: 20px 0;
+    margin-top: 30px;
+    background-color: #333;
+    color: #fff;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .operations-container {
+        grid-template-columns: 1fr; /* Stack sections on smaller screens */
+    }
+
+    input[type="text"],
+    input[type="password"],
+    input[type="url"],
+    select {
+        width: 100%; /* Ensure full width on smaller screens */
+    }
+}

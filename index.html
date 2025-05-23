@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Repository Management</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>GitHub Repository Management</h1>
+    </header>
+
+    <main>
+        <section id="auth-section">
+            <h2>GitHub Token</h2>
+            <label for="github-token">Token:</label>
+            <input type="password" id="github-token" name="github-token" placeholder="Enter your GitHub PAT">
+            <small>Token is used for API requests and not stored permanently by this frontend.</small>
+        </section>
+
+        <hr>
+
+        <section id="repo-display-area">
+            <h2>Managed Repositories</h2>
+            <ul id="repo-list">
+                <!-- Repositories will be listed here -->
+                <!-- Example: <li>repo-name (owner/repo-name) <button class="select-repo" data-repo-id="1">Select</button></li> -->
+            </ul>
+            <p id="no-repos-message">No repositories managed yet. Clone or create one!</p>
+            <p><strong>Selected Repository:</strong> <span id="selected-repo-display">None</span></p>
+        </section>
+        
+        <hr>
+
+        <div class="operations-container">
+            <section id="clone-repo-section">
+                <h2>Clone Repository</h2>
+                <form id="clone-form">
+                    <div>
+                        <label for="clone-url">Repository URL:</label>
+                        <input type="text" id="clone-url" name="clone-url" required placeholder="https://github.com/owner/repo.git">
+                    </div>
+                    <div>
+                        <label for="clone-local-path">Local Path (on server):</label>
+                        <input type="text" id="clone-local-path" name="clone-local-path" required placeholder="e.g., my_cloned_repo_on_server">
+                    </div>
+                    <button type="submit">Clone</button>
+                </form>
+                <div id="clone-feedback" class="feedback"></div>
+            </section>
+
+            <section id="push-repo-section">
+                <h2>Push to Repository</h2>
+                <p>Select a repository from the list above to enable push.</p>
+                <form id="push-form">
+                     <div>
+                        <label for="push-local-path">Local Path (on server):</label>
+                        <input type="text" id="push-local-path" name="push-local-path" required placeholder="Path of the repo on server">
+                    </div>
+                    <div>
+                        <label for="push-remote-name">Remote Name:</label>
+                        <input type="text" id="push-remote-name" name="push-remote-name" value="origin">
+                    </div>
+                    <div>
+                        <label for="push-branch-name">Branch Name:</label>
+                        <input type="text" id="push-branch-name" name="push-branch-name" value="main">
+                    </div>
+                    <button type="submit" id="push-button" disabled>Push</button>
+                </form>
+                <div id="push-feedback" class="feedback"></div>
+            </section>
+
+            <section id="create-repo-section">
+                <h2>Create New GitHub Repository</h2>
+                <form id="create-form">
+                    <div>
+                        <label for="create-repo-name">Repository Name:</label>
+                        <input type="text" id="create-repo-name" name="create-repo-name" required placeholder="my-new-awesome-repo">
+                    </div>
+                    <div>
+                        <label for="create-repo-desc">Description:</label>
+                        <input type="text" id="create-repo-desc" name="create-repo-desc" placeholder="A brief description">
+                    </div>
+                    <div>
+                        <label for="create-repo-private">Visibility:</label>
+                        <select id="create-repo-private" name="create-repo-private">
+                            <option value="false">Public</option>
+                            <option value="true" selected>Private</option>
+                        </select>
+                    </div>
+                    <button type="submit">Create Repository</button>
+                </form>
+                <div id="create-feedback" class="feedback"></div>
+            </section>
+
+            <section id="update-repo-section">
+                <h2>Update GitHub Repository</h2>
+                <p>Select a repository from the list to enable update. Owner and Repo Name will be taken from selection.</p>
+                <form id="update-form">
+                    <div>
+                        <label for="update-owner">Owner (auto-filled from selection):</label>
+                        <input type="text" id="update-owner" name="update-owner" readonly placeholder="e.g., your-username">
+                    </div>
+                     <div>
+                        <label for="update-repo-name-display">Repo Name (auto-filled from selection):</label>
+                        <input type="text" id="update-repo-name-display" name="update-repo-name-display" readonly placeholder="e.g., selected-repo">
+                    </div>
+                    <div>
+                        <label for="update-repo-desc">New Description:</label>
+                        <input type="text" id="update-repo-desc" name="update-repo-desc" placeholder="Updated description">
+                    </div>
+                    <div>
+                        <label for="update-repo-homepage">New Homepage URL:</label>
+                        <input type="text" id="update-repo-homepage" name="update-repo-homepage" placeholder="https://example.com/my-repo">
+                    </div>
+                    <div>
+                        <label for="update-repo-private">New Visibility:</label>
+                        <select id="update-repo-private" name="update-repo-private">
+                            <option value="">(No change)</option>
+                            <option value="false">Public</option>
+                            <option value="true">Private</option>
+                        </select>
+                    </div>
+                    <button type="submit" id="update-button" disabled>Update Repository</button>
+                </form>
+                <div id="update-feedback" class="feedback"></div>
+            </section>
+
+            <section id="delete-repo-section">
+                <h2>Delete GitHub Repository</h2>
+                <p>Select a repository from the list to enable delete. Owner and Repo Name will be taken from selection.</p>
+                 <form id="delete-form">
+                    <div>
+                        <label for="delete-owner">Owner (auto-filled from selection):</label>
+                        <input type="text" id="delete-owner" name="delete-owner" readonly placeholder="e.g., your-username">
+                    </div>
+                     <div>
+                        <label for="delete-repo-name-display">Repo Name (auto-filled from selection):</label>
+                        <input type="text" id="delete-repo-name-display" name="delete-repo-name-display" readonly placeholder="e.g., selected-repo">
+                    </div>
+                    <button type="submit" id="delete-button" disabled class="danger-button">Delete Repository</button>
+                </form>
+                <div id="delete-feedback" class="feedback"></div>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <p>Frontend for GitHub Operations</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
