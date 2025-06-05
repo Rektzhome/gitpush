@@ -40,7 +40,7 @@ export function ReadmeEditor({ token, username }: ReadmeEditorProps) {
       try {
         const result = await getUserRepositories(token)
         if (result.success) {
-          setRepositories(result.repositories)
+          setRepositories(result.repositories || [])
         } else {
           toast({
             title: "Error",
@@ -71,8 +71,8 @@ export function ReadmeEditor({ token, username }: ReadmeEditorProps) {
       try {
         const result = await getRepositoryBranches(token, username, repository)
         if (result.success) {
-          setBranches(result.branches)
-          if (result.branches.length > 0) {
+          setBranches(result.branches || [])
+          if (result.branches && result.branches.length > 0) {
             // Set default branch
             const defaultBranch =
               result.branches.find((b: any) => b.name === "main" || b.name === "master") || result.branches[0]

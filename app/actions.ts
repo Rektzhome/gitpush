@@ -507,7 +507,7 @@ export async function updateReadme(
       message,
       content: Base64.encode(content),
       branch,
-      sha,
+      ...(sha && { sha }),
     })
 
     return { success: true, data }

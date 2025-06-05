@@ -43,6 +43,7 @@ export default function DashboardPage() {
     }
 
     setIsLoading(false)
+    console.log("Dashboard loaded with:", { token: !!storedToken, user: storedUser ? JSON.parse(storedUser) : null })
   }, [router])
 
   const handleLogout = () => {
@@ -77,14 +78,14 @@ export default function DashboardPage() {
       label: "File Upload",
       icon: <FileUp className="h-5 w-5" />,
       activeColor: "bg-blue-600 hover:bg-blue-700 text-white",
-      component: <FileUploader token={token} username={user?.login} />,
+      component: <FileUploader token={token} username={user?.login || "Rektzhome"} />,
     },
     {
       id: "readme",
       label: "README Editor",
       icon: <FileText className="h-5 w-5" />,
       activeColor: "bg-purple-600 hover:bg-purple-700 text-white",
-      component: <ReadmeEditor token={token} username={user?.login} />,
+      component: <ReadmeEditor token={token} username={user?.login || "Rektzhome"} />,
     },
     {
       id: "create",
@@ -98,7 +99,7 @@ export default function DashboardPage() {
       label: "Manage Repos",
       icon: <Trash2 className="h-5 w-5" />,
       activeColor: "bg-red-600 hover:bg-red-700 text-white",
-      component: <RepoManager token={token} username={user?.login} />,
+      component: <RepoManager token={token} />,
     },
   ]
 

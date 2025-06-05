@@ -20,6 +20,15 @@ interface FileUploaderProps {
 }
 
 export function FileUploader({ token, username }: FileUploaderProps) {
+  console.log("FileUploader props:", { token: !!token, username })
+  
+  // Debug: Check if username is available
+  useEffect(() => {
+    if (!username) {
+      console.error("Username is missing in FileUploader!")
+    }
+  }, [username])
+  
   const [files, setFiles] = useState<FileList | null>(null)
   const [repository, setRepository] = useState("")
   const [branch, setBranch] = useState("")
@@ -42,7 +51,7 @@ export function FileUploader({ token, username }: FileUploaderProps) {
       try {
         const result = await getUserRepositories(token)
         if (result.success) {
-          setRepositories(result.repositories)
+          setRepositories(result.repositories || [])
         } else {
           toast({
             title: "Error",
@@ -66,10 +75,18 @@ export function FileUploader({ token, username }: FileUploaderProps) {
 
   useEffect(() => {
     const fetchBranches = async () => {
-      if (!token || !repository || !username) return
+      console.log("fetchBranches called with:", { token: !!token, repository, username })
+      
+      if (!repository) {
+        // Reset branches jika tidak ada repository yang dipilih
+        setBranches([]);
+        setBranch("");
+        setIsLoadingBranches(false);
+        return;
+      }
 
-      setBranch("")
       setIsLoadingBranches(true)
+      setBranch("")
       
       // Selalu sediakan branch default (main dan master)
       const defaultBranches = [
@@ -77,8 +94,19 @@ export function FileUploader({ token, username }: FileUploaderProps) {
         { name: "master" }
       ];
       
+      // Jika tidak ada token atau username, gunakan branch default
+      if (!token || !username) {
+        console.log("Missing token or username, using default branches")
+        setBranches(defaultBranches);
+        setBranch("main");
+        setIsLoadingBranches(false);
+        return;
+      }
+      
       try {
+        console.log("Calling getRepositoryBranches with:", { token: !!token, username, repository })
         const result = await getRepositoryBranches(token, username, repository)
+        console.log("getRepositoryBranches result:", result)
         if (result.success && result.branches && result.branches.length > 0) {
           // Gabungkan branch dari API dengan default branches jika belum ada
           const existingBranchNames = result.branches.map((b: any) => b.name);
@@ -111,13 +139,7 @@ export function FileUploader({ token, username }: FileUploaderProps) {
       }
     }
 
-    if (repository) {
-      fetchBranches()
-    } else {
-      // Reset branches jika tidak ada repository yang dipilih
-      setBranches([]);
-      setBranch("");
-    }
+    fetchBranches()
   }, [token, repository, username, toast])
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {

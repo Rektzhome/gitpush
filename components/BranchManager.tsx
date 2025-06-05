@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -48,12 +49,12 @@ export default function BranchManager({ token, username, repoName, onBranchSelec
     setIsLoadingBranches(true);
     try {
       const result = await getRepositoryBranches(token, username, repoName);
-      if (result.success && result.data) {
-        setBranches(result.data);
+      if (result.success && result.branches) {
+        setBranches(result.branches);
         // Determine default base branch (e.g., main, master, or first branch)
-        const mainBranch = result.data.find(b => b.name === 'main');
-        const masterBranch = result.data.find(b => b.name === 'master');
-        const determinedDefault = mainBranch?.name || masterBranch?.name || result.data[0]?.name || '';
+        const mainBranch = result.branches.find((b: Branch) => b.name === 'main');
+        const masterBranch = result.branches.find((b: Branch) => b.name === 'master');
+        const determinedDefault = mainBranch?.name || masterBranch?.name || result.branches[0]?.name || '';
         setDefaultBaseBranch(determinedDefault);
         if (!baseBranchName && determinedDefault) { // Set baseBranchName if not already set or form is not open
             setBaseBranchName(determinedDefault);
@@ -117,7 +118,7 @@ export default function BranchManager({ token, username, repoName, onBranchSelec
     // A more robust solution would fetch the repo's actual default branch.
     if (branchName === 'main' || branchName === 'master' || branchName === defaultBaseBranch) {
         if(branches.length <=1){
-             toast.warn(`Cannot delete the only branch of the repository.`);
+             toast.error(`Cannot delete the only branch of the repository.`);
              return;
         }
       // toast.warn(`Are you sure you want to delete the default branch "${branchName}"? This is generally not recommended.`);
