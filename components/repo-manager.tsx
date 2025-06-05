@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
-import { getUserRepositories, createRepository, cloneRepository, deleteRepository, getReadme, updateReadme, updateRepositoryDetails, getRepositoryDetails } from "../app/actions";
+import { getUserRepositories, createRepository, deleteRepository, getReadmeContent, updateReadme, updateRepositoryDetails, getRepositoryDetails } from "../app/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -70,7 +70,7 @@ interface EditRepoFormData {
 }
 
 
-export default function RepoManager({ token }: { token: string }) {
+function RepoManager({ token }: { token: string }) {
   const [repositories, setRepositories] = useState<Repository[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -128,9 +128,9 @@ export default function RepoManager({ token }: { token: string }) {
   const fetchRepositories = async () => {
     setIsLoading(true);
     setError(null);
-    const result = await getUserRepositories(token, 'owner', sortOption);
-    if (result.success && result.data) {
-      setRepositories(result.data);
+    const result = await getUserRepositories(token, 1, 50);
+    if (result.success && result.repositories) {
+      setRepositories(result.repositories);
     } else {
       setError(result.error || "Failed to fetch repositories.");
       toast.error(result.error || "Failed to fetch repositories.");
@@ -145,7 +145,7 @@ export default function RepoManager({ token }: { token: string }) {
     }
     setIsCreatingRepo(true);
     toast.info(`Creating repository "${newRepoName}"...`);
-    const result = await createRepository(token, newRepoName, newRepoDescription, newRepoPrivate);
+    const result = await createRepository(token, newRepoName, newRepoDescription, newRepoPrivate, true);
     setIsCreatingRepo(false);
     if (result.success && result.repository) {
       toast.success(`Repository "${result.repository.name}" created successfully!`);
@@ -236,19 +236,18 @@ export default function RepoManager({ token }: { token: string }) {
     setIsReadmeLoading(true);
     // toast.info(`Fetching README for ${repo.name}...`); // Optional: can be too noisy
     
-    const result = await getReadme(token, repo.owner.login, repo.name);
+    const result = await getReadmeContent(token, repo.owner.login, repo.name);
     setIsReadmeLoading(false);
-    if (result.success && result.data) {
-      setReadmeContent(result.data);
+    if (result.success && result.content) {
+      setReadmeContent(result as any); // Cast to match interface
       try {
-        const decodedContent = Buffer.from(result.data.content, 'base64').toString('utf-8');
-        setReadmeEditorContent(decodedContent);
+        setReadmeEditorContent(result.content);
       } catch (e) {
         console.error("Error decoding README:", e);
         toast.error("Error decoding README content.");
         setReadmeEditorContent("# Error: Could not decode README content.");
       }
-      setCurrentReadmeSha(result.data.sha);
+      setCurrentReadmeSha(result.sha);
     } else {
       // toast.error(`Failed to load README: ${result.error}`);
       setReadmeEditorContent(`# No README.md found for ${repo.name}\n\nYou can create one now.`);
@@ -269,17 +268,16 @@ export default function RepoManager({ token }: { token: string }) {
       token,
       editingReadmeRepo.owner.login,
       editingReadmeRepo.name,
-      "README.md", // Assuming path is always README.md at root
       newEncodedContent,
-      currentReadmeSha, // Pass the current SHA for updates, null for new file
-      `docs: update README.md for ${editingReadmeRepo.name}` // Commit message
+      "main", // branch
+      currentReadmeSha // Pass the current SHA for updates, null for new file
     );
     setIsSavingReadme(false);
 
     if (result.success && result.data) {
       toast.success("README updated successfully!");
       // Update SHA for next save, and potentially the content if API returns it
-      setCurrentReadmeSha(result.data.content.sha);
+      setCurrentReadmeSha(result.data.content?.sha || null);
       // Optionally close modal or show further indication
       setEditingReadmeRepo(null); 
     } else {
@@ -745,3 +743,6 @@ export default function RepoManager({ token }: { token: string }) {
     </div>
   );
 }
+
+export { RepoManager };
+export default RepoManager;

@@ -10,7 +10,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useToast } from "@/hooks/use-toast"
-import { validateGitHubToken } from "../actions"
 
 export default function AuthPage() {
   const [token, setToken] = useState("")
@@ -33,7 +32,15 @@ export default function AuthPage() {
     setIsLoading(true)
 
     try {
-      const result = await validateGitHubToken(token)
+      const response = await fetch('/api/auth', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ token }),
+      })
+
+      const result = await response.json()
 
       if (result.valid) {
         // Store token and user info in localStorage
@@ -42,10 +49,13 @@ export default function AuthPage() {
 
         toast({
           title: "Authentication successful",
-          description: `Welcome, ${result.user.login}!`,
+          description: `Welcome, ${result.user?.login || 'User'}!`,
         })
 
-        router.push("/dashboard")
+        // Add small delay to ensure localStorage is saved
+        setTimeout(() => {
+          router.push("/dashboard")
+        }, 1000)
       } else {
         toast({
           title: "Authentication failed",
